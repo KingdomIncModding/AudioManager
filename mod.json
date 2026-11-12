@@ -14,7 +14,7 @@
                        "topics":  [
 
                                   ],
-                       "latestTag":  "v0.1.0"
+                       "latestTag":  "v0.1.1"
                    },
     "distribution":  {
                          "nexus":  {
@@ -51,7 +51,7 @@
                                          ]
                     },
     "publishing":  {
-                       "githubReleases":  "https://github.com/urakkaamyx/KingdomInc_AudioManager/releases/tag/v0.1.0",
+                       "githubReleases":  "https://github.com/urakkaamyx/KingdomInc_AudioManager/releases/tag/v0.1.1",
                        "nexusMods":  "https://www.nexusmods.com/kingdominc/mods/27"
                    }
 }
