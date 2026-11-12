@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace AudioManager
 {
-    [BepInPlugin(Id, "Audio Manager", "0.1.0")]
+    [BepInPlugin(Id, "Audio Manager", "0.1.1")]
     [BepInDependency("urakka.kingdominc.foundation", "0.12.0")]
     public sealed class AudioManagerPlugin : BaseUnityPlugin
     {
@@ -16,6 +16,8 @@ namespace AudioManager
         internal static AudioManagerPlugin Instance;
         readonly Dictionary<IVanillaSettingView, bool> hiddenRows = new Dictionary<IVanillaSettingView, bool>();
         readonly List<IVanillaSettingView> deadRows = new List<IVanillaSettingView>();
+        readonly Dictionary<IVanillaSectionView, bool> hiddenHeadings = new Dictionary<IVanillaSectionView, bool>();
+        readonly List<IVanillaSectionView> deadHeadings = new List<IVanillaSectionView>();
         FoundationModContext context;
         IDisposable viewObserver;
         internal IOptionsTabRegistration AudioTab;
@@ -39,7 +41,7 @@ namespace AudioManager
                 harmony = new Harmony(Id);
                 harmony.PatchAll(typeof(AudioManagerPlugin).Assembly);
                 SceneManager.sceneUnloaded += OnSceneUnloaded;
-                Logger.LogInfo("Audio Manager 0.1.0 initialized with Foundation 0.12 Options; Ambience is registered but hidden.");
+                Logger.LogInfo("Audio Manager 0.1.1 initialized with Foundation 0.12.0 Options; Ambience is registered but hidden.");
             }
             catch (Exception error)
             {
@@ -60,9 +62,10 @@ namespace AudioManager
         void OnOptionsOpened(IOptionsView view)
         {
             session.Begin();
-            PruneRows();
+            PruneViews();
             HideVanillaRow(view, VanillaSettingIds.MusicVolume);
             HideVanillaRow(view, VanillaSettingIds.SoundVolume);
+            HideAudioHeading(view);
         }
 
         void HideVanillaRow(IOptionsView view, string id)
@@ -72,11 +75,21 @@ namespace AudioManager
             row.IsVisible = false;
         }
 
-        void PruneRows()
+        void HideAudioHeading(IOptionsView view)
+        {
+            if (!view.TryGetVanillaSection(VanillaSectionIds.AudioAndSystem, out var heading) || !heading.IsAlive) return;
+            if (!hiddenHeadings.ContainsKey(heading)) hiddenHeadings.Add(heading, heading.IsVisible);
+            heading.IsVisible = false;
+        }
+
+        void PruneViews()
         {
             deadRows.Clear();
             foreach (var row in hiddenRows.Keys) if (!row.IsAlive) deadRows.Add(row);
             foreach (var row in deadRows) hiddenRows.Remove(row);
+            deadHeadings.Clear();
+            foreach (var heading in hiddenHeadings.Keys) if (!heading.IsAlive) deadHeadings.Add(heading);
+            foreach (var heading in deadHeadings) hiddenHeadings.Remove(heading);
         }
 
         void OnSceneUnloaded(Scene scene)
@@ -88,7 +101,7 @@ namespace AudioManager
                 for (int i = 0; i < levels.Length; i++) levels[i] = session.Value((AudioChannel)i);
                 router.SetLevels(levels);
             }
-            PruneRows();
+            PruneViews();
         }
 
         void Cleanup()
@@ -99,6 +112,8 @@ namespace AudioManager
             viewObserver = null;
             foreach (var pair in hiddenRows) if (pair.Key.IsAlive) pair.Key.IsVisible = pair.Value;
             hiddenRows.Clear();
+            foreach (var pair in hiddenHeadings) if (pair.Key.IsAlive) pair.Key.IsVisible = pair.Value;
+            hiddenHeadings.Clear();
             context?.Dispose();
             context = null;
             AudioTab = null;

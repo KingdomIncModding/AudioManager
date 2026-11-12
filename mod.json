@@ -1,7 +1,7 @@
 {
     "id":  "urakka.kingdominc.audiomanager",
     "name":  "Audio Manager",
-    "version":  "0.1.0",
+    "version":  "0.1.1",
     "author":  "Urakka",
     "description":  "Separate volume controls for Kingdom Inc music, interface sounds, crafting, machines, economy, combat, and participating mods.",
     "repository":  {

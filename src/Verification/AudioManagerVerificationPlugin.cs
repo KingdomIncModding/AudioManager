@@ -22,7 +22,7 @@ using UnityEngine.UI;
 
 namespace AudioManager.Verification
 {
-    [BepInPlugin("urakka.kingdominc.audiomanager.verification", "Audio Manager Verification", "0.1.0")]
+    [BepInPlugin("urakka.kingdominc.audiomanager.verification", "Audio Manager Verification", "0.1.1")]
     [BepInDependency(AudioManagerPlugin.Id)]
     public sealed class AudioManagerVerificationPlugin : BaseUnityPlugin
     {
@@ -138,6 +138,7 @@ namespace AudioManager.Verification
             options = MainMenuUI.Instance.GetComponentInChildren<OptionsUI>(true);
             menu = options.GetComponent<FoundationConfigMenu>();
             Check(menu && FoundationApi.Options.TryGet(AudioManagerPlugin.Id, "audio", out _), "Audio tab is registered with Foundation's public Options API");
+            VerifyGameHeading("game-tab.png");
             ShowAudio();
             Check(options.transform.Find("OptionsTabs/LeftTabsViewport/LeftTabs").GetComponentsInChildren<Button>().Length == 2 &&
                 options.transform.Find("OptionsTabs/RightTabs").GetComponentsInChildren<Button>().Length == 2,
@@ -208,6 +209,7 @@ namespace AudioManager.Verification
             Check(musicSource.isPlaying && Near(musicSource.volume, musicPreference * .25f), "Native music restarts at its saved level without repeated scaling");
             options.CancelOptions();
             MainMenuUI.Instance.ShowOptions();
+            VerifyGameHeading("game-tab-reopened.png");
             ShowAudio();
             Check(GetSlider(AudioChannel.Master).value == (restart ? 67 : 100), "Cancel discards previews and reopening restores committed values");
             int[] levels = { 67, 73, 37, 49, 51, 53, 59, 100, 61 };
@@ -281,6 +283,7 @@ namespace AudioManager.Verification
             options = ingame.GetComponentInChildren<OptionsUI>(true);
             menu = options.GetComponent<FoundationConfigMenu>();
             Check(menu, "In-game Foundation menu is available");
+            VerifyGameHeading("game-tab-ingame.png");
             ShowAudio();
             Check(options.GetComponentInChildren<AudioSettingsView>(), "Audio settings render inside the in-game Foundation tab too");
             VerificationScreenshot.Capture(Path.Combine(directory, "audio-tab-ingame.png"));
@@ -301,8 +304,27 @@ namespace AudioManager.Verification
             Check(menu.TryGetVanillaSetting(VanillaSettingIds.MusicVolume, out var nativeMusic) && nativeMusic.IsVisible &&
                 menu.TryGetVanillaSetting(VanillaSettingIds.SoundVolume, out var nativeSound) && nativeSound.IsVisible,
                 "Cleanup restores the native volume controls through Foundation's public API");
+            Check(((IOptionsView)menu).TryGetVanillaSection(VanillaSectionIds.AudioAndSystem, out var heading) && heading.IsVisible,
+                "Cleanup restores the Game Audio & System heading through Foundation's public API");
             registration.Dispose();
             Destroy(obj);
+        }
+
+        void VerifyGameHeading(string screenshot)
+        {
+            menu.ShowGameTab();
+            IOptionsView view = menu;
+            Check(view.TryGetVanillaSection(VanillaSectionIds.AudioAndSystem, out var heading) && !heading.IsVisible,
+                "Game Audio & System heading is hidden: " + screenshot);
+            bool hasAutosave = view.TryGetVanillaSetting(VanillaSettingIds.AutosaveFreq, out var autosave);
+            Check(view.TryGetVanillaSection(VanillaSectionIds.DisplayAndInterface, out var display) && display.IsVisible &&
+                hasAutosave && autosave.IsVisible &&
+                view.TryGetVanillaSetting(VanillaSettingIds.KeyBindings, out var bindings) && bindings.IsVisible,
+                "Display heading, Autosave and Key Bindings remain visible: " + screenshot);
+            // Foundation must retain the explicit heading choice after another native-row layout update.
+            autosave.IsVisible = true;
+            Check(!heading.IsVisible, "Native row layout updates do not restore the hidden audio heading: " + screenshot);
+            VerificationScreenshot.Capture(Path.Combine(directory, screenshot));
         }
 
         void SetSlider(AudioChannel channel, int value) => GetSlider(channel).value = value;

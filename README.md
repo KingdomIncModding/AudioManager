@@ -15,7 +15,7 @@ Adjust Kingdom Inc's audio from a dedicated **Audio** tab in Foundation's Option
 
 Each slider ranges from 0 to 100. All new multipliers start at 100%, preserving your existing music and sound levels. Native music selection, transitions, sound pitch, and repeated-sound suppression remain in use. Victory music stays on the Music channel; the mod does not add attack sounds.
 
-Slider changes preview immediately. **Apply & Close** saves them; **Cancel** or closing Options restores your previous committed mix. Switching tabs keeps pending changes. Display settings remain under **Game**.
+Slider changes preview immediately. **Apply & Close** saves them; **Cancel** or closing Options restores your previous committed mix. Switching tabs keeps pending changes. Display settings, Autosave and Key Bindings remain under **Game**; its old **Audio & System** heading is hidden.
 
 ## Requirements
 
