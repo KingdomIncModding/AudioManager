@@ -1,5 +1,7 @@
 # Audio Manager
 
+**Current release: 0.1.2 — for Kingdom Inc game version 1.0.14.**
+
 Adjust Kingdom Inc's audio from a dedicated **Audio** tab in Foundation's Options menu.
 
 ## Volume controls
@@ -21,7 +23,7 @@ Slider changes preview immediately. **Apply & Close** saves them; **Cancel** or 
 
 - Kingdom Inc.
 - BepInEx 5.
-- [Foundation](https://www.nexusmods.com/kingdominc/mods/18) 0.12.0 or later.
+- [Foundation](https://www.nexusmods.com/kingdominc/mods/18) 0.14.0 or later.
 
 ## Installation and use
 

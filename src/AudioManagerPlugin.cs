@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using BepInEx;
-using HarmonyLib;
 using KingdomFoundation.Api;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace AudioManager
 {
-    [BepInPlugin(Id, "Audio Manager", "0.1.1")]
-    [BepInDependency("urakka.kingdominc.foundation", "0.12.0")]
+    [BepInPlugin(Id, "Audio Manager", "0.1.2")]
+    [BepInDependency("urakka.kingdominc.foundation", "0.14.0")]
     public sealed class AudioManagerPlugin : BaseUnityPlugin
     {
         public const string Id = "urakka.kingdominc.audiomanager";
@@ -23,7 +22,7 @@ namespace AudioManager
         internal IOptionsTabRegistration AudioTab;
         AudioSettingsSession session;
         AudioRouter router;
-        Harmony harmony;
+        IDisposable audioHooks;
 
         void Awake()
         {
@@ -38,10 +37,9 @@ namespace AudioManager
                 session = new AudioSettingsSession(new AudioSettings(Config), router);
                 RegisterOptions();
                 AudioManagerApi.Router = router;
-                harmony = new Harmony(Id);
-                harmony.PatchAll(typeof(AudioManagerPlugin).Assembly);
+                audioHooks = FoundationAudioHooks.Register();
                 SceneManager.sceneUnloaded += OnSceneUnloaded;
-                Logger.LogInfo("Audio Manager 0.1.1 initialized with Foundation 0.12.0 Options; Ambience is registered but hidden.");
+                Logger.LogInfo("Audio Manager 0.1.2 initialized through Foundation 0.14.0; Ambience is registered but hidden.");
             }
             catch (Exception error)
             {
@@ -117,7 +115,8 @@ namespace AudioManager
             context?.Dispose();
             context = null;
             AudioTab = null;
-            harmony?.UnpatchSelf();
+            audioHooks?.Dispose();
+            audioHooks = null;
             AudioManagerApi.Router = null;
             router?.Dispose();
             router = null;
