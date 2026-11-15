@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using KingdomFoundation.Api;
 using TMPro;
@@ -11,6 +12,10 @@ namespace AudioManager
     {
         readonly Dictionary<AudioChannel, Slider> sliders = new Dictionary<AudioChannel, Slider>();
         readonly Dictionary<AudioChannel, TMP_Text> values = new Dictionary<AudioChannel, TMP_Text>();
+        Slider nativeMusicSlider;
+        Slider nativeSoundSlider;
+        TMP_Text nativeMusicValue;
+        TMP_Text nativeSoundValue;
         AudioSettingsSession session;
 
         internal void Initialize(IModConfigTemplates templates, AudioSettingsSession editSession)
@@ -23,17 +28,31 @@ namespace AudioManager
             title.rectTransform.anchorMax = Vector2.one;
             title.rectTransform.offsetMin = title.rectTransform.offsetMax = Vector2.zero;
             int index = 0;
-            foreach (var channel in ChannelRegistry.Visible) BuildRow(templates, channel, index++);
+            foreach (var channel in ChannelRegistry.Visible) BuildChannelRow(templates, channel, index++);
+            float baseTop = 70 + 37.5f * index + 14f;
+            BuildSliderRow(templates, "NativeMusicBase", "Base Music", "Native game music preference (unmutes prior silent save)",
+                session.NativeMusicValue, value => session.PreviewNativeMusic(value), baseTop, out nativeMusicSlider, out nativeMusicValue);
+            BuildSliderRow(templates, "NativeSoundBase", "Base Effects", "Native game sound effects preference (unmutes prior silent save)",
+                session.NativeSoundValue, value => session.PreviewNativeSound(value), baseTop + 37.5f, out nativeSoundSlider, out nativeSoundValue);
             session.Changed += RefreshValues;
         }
 
-        void BuildRow(IModConfigTemplates templates, AudioChannel channel, int index)
+        void BuildChannelRow(IModConfigTemplates templates, AudioChannel channel, int index)
         {
-            var row = templates.CreateSliderRow(transform, channel.ToString(), 0, 100,
-                session.Value(channel), 1, value => session.Preview(channel, Mathf.RoundToInt(value)),
-                value => Mathf.RoundToInt(value).ToString(), out var slider, out var valueText);
-            row.name = channel + "Volume";
-            PositionRow((RectTransform)row.transform, 70 + 37.5f * index, 37.5f);
+            BuildSliderRow(templates, channel + "Volume", channel.ToString(), ChannelRegistry.Description(channel),
+                session.Value(channel), value => session.Preview(channel, value), 70 + 37.5f * index, out var slider, out var valueText);
+            sliders.Add(channel, slider);
+            values.Add(channel, valueText);
+        }
+
+        void BuildSliderRow(IModConfigTemplates templates, string objectName, string labelText, string descriptionText,
+            int initialValue, Action<int> onChanged, float top, out Slider slider, out TMP_Text valueText)
+        {
+            var row = templates.CreateSliderRow(transform, labelText, 0, 100,
+                initialValue, 1, value => onChanged(Mathf.RoundToInt(value)),
+                value => Mathf.RoundToInt(value).ToString(), out slider, out valueText);
+            row.name = objectName;
+            PositionRow((RectTransform)row.transform, top, 37.5f);
             var label = row.transform.Find("RowLabel").GetComponent<TMP_Text>();
             PlaceWithinRow(label.rectTransform, 0, .202f);
             label.alignment = TextAlignmentOptions.MidlineRight;
@@ -45,13 +64,11 @@ namespace AudioManager
             valueText.fontSize = 18;
             var description = Instantiate(label, row.transform);
             description.name = "Description";
-            description.text = ChannelRegistry.Description(channel);
+            description.text = descriptionText;
             description.alignment = TextAlignmentOptions.MidlineLeft;
             description.fontSize = 20;
             description.textWrappingMode = TextWrappingModes.NoWrap;
             PlaceWithinRow(description.rectTransform, .564f, 1);
-            sliders.Add(channel, slider);
-            values.Add(channel, valueText);
         }
 
         static void PositionRow(RectTransform rect, float top, float height)
@@ -78,6 +95,18 @@ namespace AudioManager
                 int value = session.Value(pair.Key);
                 pair.Value.SetValueWithoutNotify(value);
                 values[pair.Key].text = value.ToString();
+            }
+            if (nativeMusicSlider != null)
+            {
+                int music = session.NativeMusicValue;
+                nativeMusicSlider.SetValueWithoutNotify(music);
+                nativeMusicValue.text = music.ToString();
+            }
+            if (nativeSoundSlider != null)
+            {
+                int sound = session.NativeSoundValue;
+                nativeSoundSlider.SetValueWithoutNotify(sound);
+                nativeSoundValue.text = sound.ToString();
             }
         }
 

@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 
 namespace AudioManager
 {
-    [BepInPlugin(Id, "Audio Manager", "0.1.2")]
-    [BepInDependency("urakka.kingdominc.foundation", "0.14.0")]
+    [BepInPlugin(Id, "Audio Manager", "0.1.3")]
+    [BepInDependency("urakka.kingdominc.foundation", "0.14.4")]
     public sealed class AudioManagerPlugin : BaseUnityPlugin
     {
         public const string Id = "urakka.kingdominc.audiomanager";
@@ -39,7 +39,7 @@ namespace AudioManager
                 AudioManagerApi.Router = router;
                 audioHooks = FoundationAudioHooks.Register();
                 SceneManager.sceneUnloaded += OnSceneUnloaded;
-                Logger.LogInfo("Audio Manager 0.1.2 initialized through Foundation 0.14.0; Ambience is registered but hidden.");
+                Logger.LogInfo("Audio Manager 0.1.3 initialized through Foundation 0.14.4; Ambience is registered but hidden.");
             }
             catch (Exception error)
             {

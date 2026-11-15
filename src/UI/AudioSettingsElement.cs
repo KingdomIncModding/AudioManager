@@ -17,7 +17,7 @@ namespace AudioManager
             var view = new GameObject("AudioManagerAudioControls", typeof(RectTransform), typeof(LayoutElement));
             view.transform.SetParent(context.Container, false);
             var layout = view.GetComponent<LayoutElement>();
-            layout.preferredHeight = layout.minHeight = 390;
+            layout.preferredHeight = layout.minHeight = 470;
             view.AddComponent<AudioSettingsView>().Initialize(context.Templates, session);
             view.SetActive(IsVisible);
             return view;

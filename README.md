@@ -1,6 +1,6 @@
 # Audio Manager
 
-**Current release: 0.1.2 — for Kingdom Inc game version 1.0.14.**
+**Current release: 0.1.3 — for Kingdom Inc game version 1.0.14.**
 
 Adjust Kingdom Inc's audio from a dedicated **Audio** tab in Foundation's Options menu.
 
@@ -14,8 +14,9 @@ Adjust Kingdom Inc's audio from a dedicated **Audio** tab in Foundation's Option
 - **Economy:** coins, collections, sales, and exchange confirmations.
 - **Combat:** existing arena and dungeon launch confirmations.
 - **Mods:** sounds explicitly registered by participating mods.
+- **Base Music / Base Effects:** the game's original music and sound effect master preferences, exposed right in the Audio tab so previously muted saves can always be raised or restored.
 
-Each slider ranges from 0 to 100. All new multipliers start at 100%, preserving your existing music and sound levels. Native music selection, transitions, sound pitch, and repeated-sound suppression remain in use. Victory music stays on the Music channel; the mod does not add attack sounds.
+Each slider ranges from 0 to 100. All new channel multipliers start at 100%, preserving your existing music and sound levels. Native music selection, transitions, sound pitch, and repeated-sound suppression remain in use. Victory music stays on the Music channel; the mod does not add attack sounds.
 
 Slider changes preview immediately. **Apply & Close** saves them; **Cancel** or closing Options restores your previous committed mix. Switching tabs keeps pending changes. Display settings, Autosave and Key Bindings remain under **Game**; its old **Audio & System** heading is hidden.
 
@@ -23,7 +24,7 @@ Slider changes preview immediately. **Apply & Close** saves them; **Cancel** or 
 
 - Kingdom Inc.
 - BepInEx 5.
-- [Foundation](https://www.nexusmods.com/kingdominc/mods/18) 0.14.0 or later.
+- [Foundation](https://www.nexusmods.com/kingdominc/mods/18) 0.14.4 or later.
 
 ## Installation and use
 
