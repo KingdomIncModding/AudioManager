@@ -1,5 +1,7 @@
 # Audio Manager
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6V62AX30M)
+
 **Current release: 0.1.3 — for Kingdom Inc game version 1.0.14.**
 
 Adjust Kingdom Inc's audio from a dedicated **Audio** tab in Foundation's Options menu.
@@ -72,3 +74,9 @@ To uninstall, close the game and remove `BepInEx/plugins/AudioManager/`. The gam
 | Arena.DoManualCraft | Prefix / Finalizer | Classifies arena action confirmations as Combat. |
 | Arena.Update | Prefix / Finalizer | Classifies arena completion effects as Combat. |
 | Dungeon.CheckForParty | Prefix / Finalizer | Classifies dungeon launch confirmations as Combat. |
+
+## Support
+
+If you enjoy these Kingdom Inc mods and tools, consider supporting development on Ko-fi!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6V62AX30M)
